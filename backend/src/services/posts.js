@@ -9,7 +9,7 @@ async function listPosts(
   query = {},
   { sortBy = 'createdAt', sortOrder = 'descending' } = {},
 ) {
-  return await Post.find(query).sort({ [sortBy]: sortOrder })
+  return;
 }
 
 export async function listAllPosts(options) {
