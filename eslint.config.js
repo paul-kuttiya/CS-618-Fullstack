@@ -27,7 +27,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['server/**/*.{js,ts}'],
+    files: ['backend/**/*.{js,ts}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
