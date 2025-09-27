@@ -9,6 +9,7 @@ export function userRoutes(app) {
 						const user = await createUser(req.body)
 						return res.status(201).json({ username: user.username })
 				} catch (err) {
+						console.error('Signup error:', err)
 						return res.status(400).json({
 								error: 'failed to create the user, does the username already exist?',
 						})
@@ -19,6 +20,7 @@ export function userRoutes(app) {
 						const token = await loginUser(req.body)
 						return res.status(200).send({ token })
 				} catch (err) {
+						console.error('Login error:', err)
 						return res.status(400).send({
 								error: 'login failed, did you enter the correct username/password?',
 						})

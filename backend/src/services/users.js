@@ -27,6 +27,7 @@ export async function getUserInfoById(userId) {
 				if (!user) return { username: userId }
 				return { username: user.username }
 		} catch (err) {
+				console.error('getUserInfoById error:', err)
 				return { username: userId }
 		}
 }
