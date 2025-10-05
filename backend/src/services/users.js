@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 import { User } from '../db/models/user.js'
 export async function createUser({ username, password }) {
 		const hashedPassword = await bcrypt.hash(password, 10)
@@ -23,6 +24,9 @@ export async function loginUser({ username, password }) {
 
 export async function getUserInfoById(userId) {
 		try {
+			// Defensive: if userId is falsy or not a valid ObjectId, return fallback
+			if (!userId) return { username: userId }
+			if (!mongoose.Types.ObjectId.isValid(userId)) return { username: userId }
 				const user = await User.findById(userId)
 				if (!user) return { username: userId }
 				return { username: user.username }

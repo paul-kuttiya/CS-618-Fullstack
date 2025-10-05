@@ -6,23 +6,25 @@ import { Header } from '../components/Header.jsx'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getPosts } from '../api/posts.js'
+
 export function Blog() {
-		const [author, setAuthor] = useState('')
-		const [sortBy, setSortBy] = useState('createdAt')
-		const [sortOrder, setSortOrder] = useState('descending')
-		const postsQuery = useQuery({
-				queryKey: ['posts', { author, sortBy, sortOrder }],
-				queryFn: () => getPosts({ author, sortBy, sortOrder }),
-		})
-		const posts = postsQuery.data ?? []
-		return (
-				<div style={{ padding: 8 }}>
-						<Header />
-						<br />
-						<hr />
-						<br />
-						<h1>Welcome to My Blog!</h1>
-						<CreatePost />
+  const [author, setAuthor] = useState('')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [sortOrder, setSortOrder] = useState('descending')
+
+  const postsQuery = useQuery({
+    queryKey: ['posts', { author, sortBy, sortOrder }],
+    queryFn: () => getPosts({ author, sortBy, sortOrder }),
+  })
+
+  const posts = postsQuery.data ?? []
+
+  return (
+    <div style={{ padding: 8 }}>
+      <Header />
+      <br />
+      <hr />
+      <CreatePost />
       <br />
       <hr />
       Filter by:
