@@ -2,15 +2,15 @@ import { Blog } from './pages/Blog.jsx'
 import { Signup } from './pages/Signup.jsx'
 import { Login } from './pages/Login.jsx'
 import { useLoaderData } from 'react-router-dom'
-import { getPosts } from './api/posts.js'
+import { getPosts, getPostById } from './api/posts.js'
+import { ViewPost } from './pages/ViewPost.jsx'
 import {
   QueryClient,
   dehydrate,
   HydrationBoundary,
 } from '@tanstack/react-query'
 import { getUserInfo } from './api/users.js'
-import { ViewPost } from './pages/ViewPost.jsx'
-import { getPostById } from './api/posts.js'
+
 export const routes = [
   {
     path: '/',
@@ -19,26 +19,17 @@ export const routes = [
       const author = ''
       const sortBy = 'createdAt'
       const sortOrder = 'descending'
+
       const posts = await getPosts({ author, sortBy, sortOrder })
+
       await queryClient.prefetchQuery({
         queryKey: ['posts', { author, sortBy, sortOrder }],
         queryFn: () => posts,
       })
-      // Normalize author IDs and remove falsy values (avoid requests to `/users/undefined`)
-      const uniqueAuthors = Array.from(
-        new Set(
-          posts
-            .map((post) => {
-              if (!post || !post.author) return null
-              // author may be an object (populated) or a raw id/string
-              if (typeof post.author === 'object') {
-                return post.author._id ?? (post.author.toString ? post.author.toString() : null)
-              }
-              return post.author
-            })
-            .filter(Boolean),
-        ),
-      )
+
+      const uniqueAuthors = posts
+        .map((post) => post.author)
+        .filter((value, index, array) => array.indexOf(value) === index)
 
       for (const userId of uniqueAuthors) {
         await queryClient.prefetchQuery({
@@ -46,6 +37,7 @@ export const routes = [
           queryFn: () => getUserInfo(userId),
         })
       }
+
       return dehydrate(queryClient)
     },
     Component() {
@@ -58,31 +50,42 @@ export const routes = [
     },
   },
   {
-    path: '/posts/:postId',
-    loader: async ({ params }) => {
-      const queryClient = new QueryClient()
-      const postId = params.postId
-      await queryClient.prefetchQuery({
-        queryKey: ['post', postId],
-        queryFn: () => getPostById(postId),
-      })
-      return dehydrate(queryClient)
-    },
-    Component({ params }) {
-      const dehydratedState = useLoaderData()
-      return (
-        <HydrationBoundary state={dehydratedState}>
-          <ViewPost postId={params.postId} />
-        </HydrationBoundary>
-      )
-    },
-  },
-  {
     path: '/signup',
     element: <Signup />,
   },
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/posts/:postId',
+    loader: async ({ params }) => {
+      const postId = params.postId
+      const queryClient = new QueryClient()
+
+      const post = await getPostById(postId)
+
+      await queryClient.prefetchQuery({
+        queryKey: ['post', postId],
+        queryFn: () => post,
+      })
+
+      if (post?.author) {
+        await queryClient.prefetchQuery({
+          queryKey: ['users', post.author],
+          queryFn: () => getUserInfo(post.author),
+        })
+      }
+
+      return { dehydratedState: dehydrate(queryClient), postId }
+    },
+    Component() {
+      const { dehydratedState, postId } = useLoaderData()
+      return (
+        <HydrationBoundary state={dehydratedState}>
+          <ViewPost postId={postId} />
+        </HydrationBoundary>
+      )
+    },
   },
 ]
