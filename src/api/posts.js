@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const API_BASE =
   (typeof window === 'undefined'
     ? (process.env.SSR_BACKEND_URL || process.env.VITE_BACKEND_URL)
