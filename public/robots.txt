@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://scaling-system-97xvwqvp6qv279pw-5173.app.github.dev//sitemap.xml
