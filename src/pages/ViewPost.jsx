@@ -1,13 +1,35 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { Header } from '../components/Header.jsx'
 import { Post } from '../components/Post.jsx'
 import { getPostById } from '../api/posts.js'
+import { PostStats } from '../components/PostStats.jsx'
+import { useEffect, useState } from 'react'
+import { postTrackEvent } from '../api/events.js'
 import { getUserInfo } from '../api/users.js'
 import { Helmet } from '@dr.pogodin/react-helmet'
 
 export function ViewPost({ postId }) {
+  const [session, setSession] = useState()
+
+  const trackEventMutation = useMutation({
+    mutationFn: (action) => postTrackEvent({ postId, action, session }),
+    onSuccess: (data) => setSession(data?.session),
+  })
+
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      trackEventMutation.mutate('startView')
+      timeout = null
+    }, 1000)
+    return () => {
+      if (timeout) clearTimeout(timeout)
+      else trackEventMutation.mutate('endView')
+    }
+  }, [])
+
   const postQuery = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
@@ -23,7 +45,11 @@ export function ViewPost({ postId }) {
 
   function truncate(str, max = 160) {
     if (!str) return str
-    return str.length > max ? str.slice(0, max - 3) + '...' : str
+    if (str.length > max) {
+      return str.slice(0, max - 3) + '...'
+    } else {
+      return str
+    }
   }
 
   return (
@@ -32,19 +58,13 @@ export function ViewPost({ postId }) {
         <Helmet>
           <title>{post.title} | Full-Stack React Blog</title>
           <meta name="description" content={truncate(post.contents)} />
-          {/* Open Graph */}
           <meta property="og:type" content="article" />
           <meta property="og:title" content={post.title} />
-          {/* Article-specific OG properties (no 'og:' prefix for these keys) */}
-          <meta property="article:published_time" content={post.createdAt} />
-          {post.updatedAt && (
-            <meta property="article:modified_time" content={post.updatedAt} />
-          )}
-          {userInfo.username && (
-            <meta property="article:author" content={userInfo.username} />
-          )}
+          <meta property="og:article:published_time" content={post.createdAt} />
+          <meta property="og:article:modified_time" content={post.updatedAt} />
+          <meta property="og:article:author" content={userInfo.username} />
           {(post.tags ?? []).map((tag) => (
-            <meta key={tag} property="article:tag" content={tag} />
+            <meta key={tag} property="og:article:tag" content={tag} />
           ))}
         </Helmet>
       )}
@@ -55,7 +75,15 @@ export function ViewPost({ postId }) {
       <Link to="/">Back to main page</Link>
       <br />
       <hr />
-      {post ? <Post {...post} fullPost /> : `Post with id${postId} not found.`}
+      {post ? (
+        <div>
+          <Post {...post} fullPost />
+          <hr />
+          <PostStats postId={postId} />
+        </div>
+      ) : (
+        `Post with id ${postId} not found.`
+      )}
     </div>
   )
 }
