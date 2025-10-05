@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
 import PropTypes from 'prop-types'
-import { HelmetProvider } from 'react-helmet-async'
+import { HelmetProvider } from '@dr.pogodin/react-helmet'
 
 const queryClient = new QueryClient()
 
