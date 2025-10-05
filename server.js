@@ -62,7 +62,7 @@ async function createProdServer() {
     ),
   )
 
-  app.use('*', async (req, res, next) => {
+  app.use(async (req, res, next) => {
     try {
       if (req.originalUrl === '/sitemap.xml') {
         const sitemap = await generateSitemap()
