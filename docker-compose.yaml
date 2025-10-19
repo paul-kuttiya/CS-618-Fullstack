@@ -7,6 +7,8 @@ services:
 
   blog-backend:
     build: backend/
+    env_file:
+      - backend/.env
     environment:
       - PORT=3001
       - DATABASE_URL=mongodb://blog-database:27017/blog
