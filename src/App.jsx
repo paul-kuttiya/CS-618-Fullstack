@@ -9,6 +9,9 @@ import { HelmetProvider } from '@dr.pogodin/react-helmet'
 const apolloClient = new ApolloClient({
   link: new HttpLink({
     uri: import.meta.env.VITE_GRAPHQL_URL,
+    headers: {
+      'apollo-require-preflight': 'true',
+    },
   }),
   cache: new InMemoryCache(),
 })
