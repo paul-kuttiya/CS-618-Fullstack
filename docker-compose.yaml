@@ -21,11 +21,13 @@ services:
     build:
       context: .
       args:
-        VITE_BACKEND_URL: https://scaling-system-97xvwqvp6qv279pw-3001.app.github.dev/api/v1
+        VITE_BACKEND_URL: http://blog-backend:3001/api/v1
+        VITE_GRAPHQL_URL: http://blog-backend:3001/graphql
     environment:
       - PORT=3000
       - SSR_BACKEND_URL=http://blog-backend:3001/api/v1
       - VITE_BACKEND_URL=http://blog-backend:3001/api/v1
+      - VITE_GRAPHQL_URL=http://blog-backend:3001/graphql
     ports:
       - '3000:3000'
     depends_on:
