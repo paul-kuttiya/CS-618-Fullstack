@@ -3,11 +3,13 @@ import { AuthContextProvider } from './contexts/AuthContext.jsx'
 import PropTypes from 'prop-types'
 const queryClient = new QueryClient()
 import { ApolloProvider } from '@apollo/client/react/index.js'
-import { ApolloClient, InMemoryCache } from '@apollo/client/core/index.js'
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core/index.js'
 import { HelmetProvider } from '@dr.pogodin/react-helmet'
 
 const apolloClient = new ApolloClient({
-  uri: import.meta.env.VITE_GRAPHQL_URL,
+  link: new HttpLink({
+    uri: import.meta.env.VITE_GRAPHQL_URL,
+  }),
   cache: new InMemoryCache(),
 })
 

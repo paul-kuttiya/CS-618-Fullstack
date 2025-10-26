@@ -5,7 +5,9 @@ import { User } from '../db/models/user.js'
 export async function createUser({ username, password }) {
 		const hashedPassword = await bcrypt.hash(password, 10)
 		const user = new User({ username, password: hashedPassword })
-		return await user.save()
+		const savedUser = await user.save()
+		console.log('Saved user:', savedUser)
+		return savedUser
 }
 export async function loginUser({ username, password }) {
 		const user = await User.findOne({ username })

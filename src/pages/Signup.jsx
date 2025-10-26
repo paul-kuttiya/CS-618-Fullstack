@@ -11,7 +11,10 @@ export function Signup() {
   const [signupUser, { loading }] = useGraphQLMutation(SIGNUP_USER, {
     variables: { username, password },
     onCompleted: () => navigate('/login'),
-    onError: () => alert('failed to sign up!'),
+    onError: (error) => {
+      console.error('Signup error:', error)
+      alert('failed to sign up!')
+    },
   })
   /* const signupMutation = useMutation({
     mutationFn: () => signup({ username, password }),
