@@ -14,11 +14,13 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.7",
     "@dr.pogodin/react-helmet": "^3.0.4",
     "@tanstack/react-query": "^5.85.6",
     "compression": "^1.8.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "graphql": "^16.11.0",
     "jwt-decode": "^4.0.0",
     "mongodb": "^6.19.0",
     "prop-types": "^15.8.1",

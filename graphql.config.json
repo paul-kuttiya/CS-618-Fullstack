@@ -1,0 +1,4 @@
+{
+  "schema": "https://scaling-system-97xvwqvp6qv279pw-3000.app.github.dev/graphql",
+  "documents": "src/api/graphql/**/*.{js,jsx}"
+}

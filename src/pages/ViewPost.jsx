@@ -75,14 +75,14 @@ export function ViewPost({ postId }) {
       <Link to="/">Back to main page</Link>
       <br />
       <hr />
+      <hr />
       {post ? (
         <div>
-          <Post {...post} fullPost />
-          <hr />
-          <PostStats postId={postId} />
+          <Post {...post} fullPost id={postId} author={userInfo} />
+          <hr /> <PostStats postId={postId} />
         </div>
       ) : (
-        `Post with id ${postId} not found.`
+        `Post with id${postId} not found.`
       )}
     </div>
   )
